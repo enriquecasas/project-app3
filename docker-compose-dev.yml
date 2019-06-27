@@ -1,0 +1,29 @@
+version: '3.7'
+services:
+ pedidos:
+  build:
+    context: ./services/pedidos
+    dockerfile: Dockerfile
+  volumes:
+    - './services/pedidos:/usr/src/app'
+  ports:
+    - 5001:5000  
+  environment:
+    - FLASK_APP=project/__init__.py
+    - FLASK_ENV=development
+    - APP_SETTINGS=project.config.DevelopmentConfig  # nuevo
+    - DATABASE_URL=postgres://postgres:postgres@users-db:5432/users_dev  # nuevo
+    - DATABASE_TEST_URL=postgres://postgres:postgres@users-db:5432/users_test  # nuevo
+  
+  depends_on:  # nuevo
+    - pedido-db
+
+ pedido-db:  # nuevo
+   build:
+     context: ./services/pedidos/project/db
+     dockerfile: Dockerfile
+   ports:
+     - 5435:5432
+   environment:
+     - POSTGRES_USER=postgres
+     - POSTGRES_PASSWORD=postgres
